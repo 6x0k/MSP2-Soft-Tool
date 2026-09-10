@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "MSP2TOOL",
+  "version": "1.0",
+  "description": "MSP2TOOL — Cleaned by Mado",
+  "permissions": [
+    "storage",
+    "scripting",
+    "debugger"
+  ],
+  "host_permissions": [
+    "https://moviestarplanet2.com/*",
+    "https://*.moviestarplanet2.com/*",
+    "https://*.mspapis.com/*"
+  ],
+  "action": {
+    "default_title": "Soft tool"
+  },
+  "background": {
+    "service_worker": "bg.js"
+  }
+}
