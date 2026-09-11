@@ -421,6 +421,29 @@ async function _homeFullByName(name) {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg || typeof msg !== 'object') return false;
 
+  if (msg.type === 'xb:boot') {
+    (async () => {
+      try {
+        const [homes, questions] = await Promise.all([
+          _readJSON('d1'),
+          _readJSON('d2'),
+        ]);
+        sendResponse({
+          ok: true,
+          homes: _homesLight(homes),
+          questions: (questions && typeof questions === 'object') ? questions : {},
+          emojis: null,
+        });
+      } catch (err) {
+        sendResponse({
+          ok: false,
+          error: String(err && err.message ? err.message : err),
+        });
+      }
+    })();
+    return true;
+  }
+
   if (msg.type === 'xb:home') {
     (async () => {
       try {
