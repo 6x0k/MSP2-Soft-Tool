@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "MSP2TOOL",
-  "version": "1.0",
-  "description": "MSP2TOOL — Cleaned by Mado",
+  "name": "MSP2TOOL Clean",
+  "version": "1.8.38",
+  "description": "MSP2TOOL — clean build with 1.8.38 functional UI/features",
   "permissions": [
     "storage",
     "scripting",
@@ -14,7 +14,7 @@
     "https://*.mspapis.com/*"
   ],
   "action": {
-    "default_title": "Soft tool"
+    "default_title": "MSP2TOOL"
   },
   "background": {
     "service_worker": "bg.js"
