@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MSP2TOOL Clean",
-  "version": "1.8.38",
+  "version": "1.8.40",
   "description": "MSP2TOOL — clean build with 1.8.38 functional UI/features",
   "permissions": [
     "storage",

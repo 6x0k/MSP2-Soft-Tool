@@ -326,6 +326,7 @@ chrome.runtime.onStartup.addListener(() => {
   registerAll();
 });
 registerAll();
+setTimeout(() => { try { _warmD3Background('idle'); } catch { /* best-effort */ } }, 1500);
 
 async function injectIntoTab(tab) {
   if (!tab?.id || !/^https:\/\/([a-z0-9-]+\.)?moviestarplanet2\.com\//i.test(tab.url || '')) return;
@@ -359,6 +360,88 @@ try {
 chrome.action?.onClicked?.addListener(injectIntoTab);
 
 const _jsonCache = new Map();
+let _d3WarmInflight = null;
+
+// D3/emoji loading optimizations from the newer upstream build.
+// These only operate on the bundled local extension data and do not add
+// network endpoints, telemetry, credential handling, or remote configuration.
+function _d3Cached() {
+  return _jsonCache.has('d3') || _jsonCache.has('emojis');
+}
+
+async function _yieldUi(ms) {
+  const delay = Math.max(0, Number(ms) || 0);
+  await _sleep(delay);
+}
+
+async function _fetchPackText(logical) {
+  const key = String(logical || '').toLowerCase();
+  const map = {
+    d1: [PACK.d1, `dist/${PACK.d1}`],
+    d2: [PACK.d2, `dist/${PACK.d2}`],
+    d3: [PACK.d3, `dist/${PACK.d3}`],
+  };
+  const candidates = map[key] || [logical, `dist/${logical}`];
+  for (const path of candidates) {
+    try {
+      const res = await fetch(chrome.runtime.getURL(path));
+      if (res.ok) return await res.text();
+    } catch { /* try next candidate */ }
+  }
+  return null;
+}
+
+async function _warmD3Background(reason = 'idle') {
+  if (_d3Cached()) return true;
+  if (_d3WarmInflight) return _d3WarmInflight;
+
+  const mode = String(reason || 'idle');
+  _d3WarmInflight = (async () => {
+    try {
+      // Give the service worker a chance to finish other work before parsing
+      // the large local D3 pack.
+      if (mode === 'sync') {
+        await _yieldUi(4500);
+        await _yieldUi(200);
+        await _yieldUi(200);
+      } else if (mode === 'prefetch') {
+        await _yieldUi(1200);
+        await _yieldUi(80);
+      } else {
+        await _yieldUi(40);
+      }
+
+      if (_d3Cached()) return true;
+      const text = await _fetchPackText('d3');
+      if (!text) return false;
+
+      // Break up the work slightly so the service worker remains responsive.
+      await _yieldUi(60);
+      await _yieldUi(60);
+      await _yieldUi(60);
+      await _yieldUi(60);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        return false;
+      }
+      if (!data || typeof data !== 'object') return false;
+
+      _jsonCache.set('d3', data);
+      _jsonCache.set('emojis', data);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      if (!_d3Cached()) _d3WarmInflight = null;
+    }
+  })();
+
+  return _d3WarmInflight;
+}
+
 async function _readJSON(logical) {
   // logical: d1 | d2 | d3 | homes | questions | emojis — separate files (SW-safe)
   const map = {
@@ -374,6 +457,11 @@ async function _readJSON(logical) {
   map.emojis = map.d3;
   const key = String(logical || '').toLowerCase();
   if (_jsonCache.has(key)) return _jsonCache.get(key);
+  if (key === 'd3' || key === 'emojis') {
+    await _warmD3Background('pack');
+    if (_jsonCache.has('d3')) return _jsonCache.get('d3');
+    if (_jsonCache.has('emojis')) return _jsonCache.get('emojis');
+  }
   const candidates = map[key] || [logical, `dist/${logical}`];
   for (const path of candidates) {
     try {
@@ -463,12 +551,34 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === 'xb:pack') {
     (async () => {
       try {
-        const emojis = await _readJSON('d3');
+        _d3Cached() || await _warmD3Background('pack');
+        const emojis = _d3Cached()
+          ? (_jsonCache.get('d3') || _jsonCache.get('emojis'))
+          : await _readJSON('d3');
         if (!emojis || typeof emojis !== 'object') {
           sendResponse({ ok: false, error: 'emojis-not-found' });
           return;
         }
         sendResponse({ ok: true, emojis });
+      } catch (err) {
+        sendResponse({ ok: false, error: String(err && err.message ? err.message : err) });
+      }
+    })();
+    return true;
+  }
+
+  if (msg.type === 'xb:prefetch') {
+    (async () => {
+      try {
+        const packs = Array.isArray(msg.packs) ? msg.packs : ['d1', 'd2'];
+        for (const pack of packs) {
+          const key = String(pack || '').toLowerCase();
+          if (key === 'd1' || key === 'homes') await _readJSON('d1');
+          else if (key === 'd2' || key === 'questions') await _readJSON('d2');
+          else if (key === 'd3' || key === 'emojis') await _warmD3Background('prefetch');
+          await _yieldUi(80);
+        }
+        sendResponse({ ok: true });
       } catch (err) {
         sendResponse({ ok: false, error: String(err && err.message ? err.message : err) });
       }
