@@ -100,7 +100,7 @@ MSP2TOOL is currently distributed as an unpacked Chrome extension.
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git clone https://github.com/6x0k/MSP2-Soft-Tool.git
 ```
 
 Or download the repository as a ZIP from GitHub and extract it.
