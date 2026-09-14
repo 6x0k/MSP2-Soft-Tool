@@ -361,6 +361,8 @@ chrome.action?.onClicked?.addListener(injectIntoTab);
 
 const _jsonCache = new Map();
 let _d3WarmInflight = null;
+const _D3_CACHE_NAME = 'xb-d3-v1';
+const _D3_CACHE_KEY = 'xb://pack/d3.json';
 
 // D3/emoji loading optimizations from the newer upstream build.
 // These only operate on the bundled local extension data and do not add
@@ -372,6 +374,53 @@ function _d3Cached() {
 async function _yieldUi(ms) {
   const delay = Math.max(0, Number(ms) || 0);
   await _sleep(delay);
+}
+
+async function _readDurableD3Text() {
+  try {
+    if (!('caches' in self)) return null;
+    const cache = await caches.open(_D3_CACHE_NAME);
+    const res = await cache.match(_D3_CACHE_KEY);
+    return res && res.ok ? await res.text() : null;
+  } catch {
+    return null;
+  }
+}
+
+async function _writeDurableD3Text(text) {
+  if (typeof text !== 'string' || !text) return;
+  try {
+    if (!('caches' in self)) return;
+    const cache = await caches.open(_D3_CACHE_NAME);
+    await cache.put(
+      _D3_CACHE_KEY,
+      new Response(text, {
+        headers: {
+          'content-type': 'application/json',
+          'cache-control': 'max-age=31536000',
+        },
+      }),
+    );
+  } catch { /* durable cache is best-effort */ }
+}
+
+function _notifyPackReady() {
+  try {
+    chrome.tabs.query(
+      { url: ['https://moviestarplanet2.com/*', 'https://*.moviestarplanet2.com/*'] },
+      (tabs) => {
+        if (chrome.runtime.lastError || !Array.isArray(tabs)) return;
+        for (const tab of tabs) {
+          if (!tab || typeof tab.id !== 'number') continue;
+          try {
+            chrome.tabs.sendMessage(tab.id, { type: 'xb:packReady' }, () => {
+              void chrome.runtime.lastError;
+            });
+          } catch { /* ignore */ }
+        }
+      },
+    );
+  } catch { /* ignore */ }
 }
 
 async function _fetchPackText(logical) {
@@ -411,8 +460,20 @@ async function _warmD3Background(reason = 'idle') {
         await _yieldUi(40);
       }
 
-      if (_d3Cached()) return true;
-      const text = await _fetchPackText('d3');
+      if (_d3Cached()) {
+        try { _notifyPackReady(); } catch { /* ignore */ }
+        return true;
+      }
+
+      // 1.8.42: use a durable local CacheStorage copy when available.
+      // This avoids reparsing the bundled pack after service-worker restarts.
+      let text = await _readDurableD3Text();
+      if (!text) {
+        text = await _fetchPackText('d3');
+        if (text) {
+          try { await _writeDurableD3Text(text); } catch { /* ignore */ }
+        }
+      }
       if (!text) return false;
 
       // Break up the work slightly so the service worker remains responsive.
@@ -431,6 +492,7 @@ async function _warmD3Background(reason = 'idle') {
 
       _jsonCache.set('d3', data);
       _jsonCache.set('emojis', data);
+      try { _notifyPackReady(); } catch { /* ignore */ }
       return true;
     } catch {
       return false;

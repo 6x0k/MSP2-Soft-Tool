@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "MSP2TOOL Clean",
-  "version": "1.8.40",
-  "description": "MSP2TOOL — clean build with 1.8.38 functional UI/features",
+  "name": "6x0k Space",
+  "version": "1.8.42",
+  "description": "6x0k Space — privacy-clean MSP2 toolkit",
   "permissions": [
     "storage",
     "scripting",
@@ -14,7 +14,7 @@
     "https://*.mspapis.com/*"
   ],
   "action": {
-    "default_title": "MSP2TOOL"
+    "default_title": "6x0k Space"
   },
   "background": {
     "service_worker": "bg.js"

@@ -1,5 +1,5 @@
 /**
- * Soft Tool — ultra-light MAIN stub.
+ * 6x0k Space — ultra-light MAIN stub.
  * Privacy build: only exposes the current game auth token locally to the tool.
  * No password capture, telemetry, heartbeat, IP lookup, or third-party upload.
  * Must stay tiny so Play/login never stutter.
