@@ -1,8 +1,8 @@
-# MSP2TOOL
+# 6x0k Space
 
 <p align="center">
-  <strong>MSP2TOOL</strong><br>
-  <sub>Cleaned by Mado · v.1.0</sub>
+  <strong>6x0k Space</strong><br>
+  <sub>Cleaned by 6x0k · v.1.8.53</sub>
 </p>
 
 <p align="center">
@@ -15,6 +15,7 @@
 
 - [About](#about)
 - [What's included](#whats-included)
+- [What's New in 1.8.53](#whats-new-in-1853)
 - [What's New in 1.8.42](#whats-new-in-1842)
 - [Privacy cleanup](#privacy-cleanup)
 - [Installation](#installation)
@@ -28,13 +29,13 @@
 
 ## About
 
-**MSP2TOOL** is a browser extension that adds a collection of tools and automation features to the MovieStarPlanet 2 web client.
+**6x0k Space** is a browser extension that adds a collection of tools and automation features to the MovieStarPlanet 2 web client.
 
 This repository contains a cleaned version of the extension. The goal of this build is to remove the parts that were unrelated to the normal tool functionality — especially credential collection, telemetry, hardware fingerprinting, external synchronization and remote control mechanisms.
 
 The extension still communicates with the official MSP2 game/API infrastructure where required for its actual features.
 
-> **Important:** MSP2TOOL is an independent community project and is not affiliated with, endorsed by, or sponsored by MovieStarPlanet or its owners.
+> **Important:** 6x0k Space is an independent community project and is not affiliated with, endorsed by, or sponsored by MovieStarPlanet or its owners.
 
 ---
 
@@ -66,6 +67,60 @@ The extension provides a large in-game tool panel with functionality around:
 - Changelog / privacy information
 
 The exact availability of individual features can depend on the current MSP2 client and its APIs.
+
+---
+
+# What's New in 1.8.53
+
+Version **1.8.53** brings the selected feature and UI additions from the upstream 1.8.53 release into the clean 6x0k Space build. The feature layer was merged without restoring the upstream vendor telemetry, credential-vault, remote-control or `webRequest` systems.
+
+### What's new
+
+| Feature | Description | Status |
+|---|---|---|
+| Autographer Auto-Repeat | Repeats greeting/autograph actions with cooldown handling, counters and configurable limits. | Included |
+| VIP Detection | Checks the MSP2 membership summary to determine current VIP status. | Included |
+| Shop Emotes | Loads and parses MSP2 shop emote listings and merges refreshed data with existing local properties. | Included |
+| Emote Categories | Organizes emotes into sitting, dances, posing and basic categories. | Included |
+| Room Animations | Plays room animations using the current room/session information. | Included |
+| Animation Preview | Adds animation-sheet/grid rendering and preview playback. | Included |
+| Radar | Adds the 1.8.53 radar functionality and related UI. | Included |
+| Custom Panel Backgrounds | Allows a custom panel background using a local image or supported URL. | Included |
+| Image Upload & Compression | Reads local images and compresses/resizes large images before storing them. | Included |
+| Persistent Background Storage | Persists panel backgrounds locally with IndexedDB/local storage. | Included |
+| Background UI Sync | Synchronizes background state with the panel UI. | Included |
+
+### Autographer Auto-Repeat
+
+The autographer can repeat greeting actions while respecting cooldowns and tracking the number of sends. A configurable maximum can limit repetitions; a maximum of `0` is treated as unlimited by the upstream feature logic.
+
+### VIP Detection
+
+The new VIP helper uses the MSP2 membership-summary API to inspect membership information such as the current tier and expiry. This is a direct MSP2 API feature and does not require the removed vendor infrastructure.
+
+### Shop Emotes
+
+1.8.53 adds a shop-inventory loader that can process multiple pages of MSP2 emote listings. The parser categorizes emotes and preserves compatible properties already stored locally.
+
+### Room Animations & Animation Preview
+
+New helpers resolve the current session, play room animations and provide an animation-sheet/grid preview for the available animation data.
+
+### Custom Panel Backgrounds
+
+Panel backgrounds can be supplied as local images or supported image URLs. Large images are resized and compressed before being persisted. The clean build keeps this background data locally instead of uploading it to a vendor service.
+
+### Radar
+
+The 1.8.53 radar UI and supporting helpers are included in the clean build.
+
+### Removed from the clean UI
+
+The upstream **Feedback / Idea** tab is intentionally not included in 6x0k Space. The rest of the selected 1.8.53 feature additions remain available.
+
+### Privacy boundary
+
+The 1.8.53 feature merge does **not** restore the upstream privacy-sensitive background systems. The clean build continues to exclude credential/password interception, vendor vault uploads, third-party account synchronization, hardware/device fingerprinting, heartbeat/presence reporting, external IP telemetry, remote configuration, remote kill-switches, forced remote version checks, vendor feedback uploads and `webRequest`.
 
 ---
 
@@ -184,7 +239,7 @@ The `debugger` permission is still present because parts of the tool use Chrome 
 
 # Installation
 
-MSP2TOOL is currently distributed as an unpacked Chrome extension.
+6x0k Space is currently distributed as an unpacked Chrome extension.
 
 ### 1. Download the repository
 
@@ -233,14 +288,14 @@ Do **not** select the ZIP file itself. Select the extracted project folder.
 
 Open the MSP2 website and reload the page if it was already open.
 
-The MSP2TOOL panel should become available once the game has loaded.
+The 6x0k Space panel should become available once the game has loaded.
 
 ---
 
 # Repository structure
 
 ```text
-MSP2TOOL/
+6x0k Space/
 ├── app.js          # Main UI and tool functionality
 ├── bg.js           # Manifest V3 background service worker
 ├── boot.js         # Page ↔ extension bridge / initialization
@@ -341,7 +396,31 @@ The previous third-party telemetry/vendor domains are no longer present in the m
 
 # Changelog
 
-## v.1.0 — Cleaned by Mado
+## v.1.8.53 — Cleaned by 6x0k
+
+### Added
+
+- Autographer Auto-Repeat with cooldown handling, counters and configurable limits.
+- VIP detection using the MSP2 membership-summary API.
+- MSP2 shop emote loading and parsing.
+- Emote categorization for sitting, dances, posing and basic groups.
+- Room animation playback helpers.
+- Animation-sheet/grid preview and playback.
+- Radar functionality and UI.
+- Custom panel backgrounds.
+- Local image and supported URL background input.
+- Image resizing/compression for large panel backgrounds.
+- Local persistent background storage using IndexedDB/local storage.
+- Background UI synchronization.
+
+### Removed from the clean UI
+
+- Feedback / Idea tab.
+
+### Privacy
+
+The new 1.8.53 feature layer was merged without restoring the upstream vendor credential, telemetry, heartbeat, device-fingerprint, remote-gate or `webRequest` systems.
+
 
 This release is based on the original extension and removes the following functionality:
 
@@ -446,7 +525,7 @@ There is no Node.js build step required for the current unpacked extension.
 After changing source files:
 
 1. Open `chrome://extensions/`
-2. Find **MSP2TOOL**
+2. Find **6x0k Space**
 3. Click **Reload**
 4. Refresh the MSP2 page
 
@@ -472,5 +551,5 @@ Use browser automation and game-related functionality responsibly and at your ow
 ---
 
 <p align="center">
-  <sub>MSP2TOOL · Cleaned by Mado · v.1.0</sub>
+  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.53</sub>
 </p>

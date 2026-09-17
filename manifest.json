@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "6x0k Space",
-  "version": "1.8.42",
+  "version": "1.8.53",
   "description": "6x0k Space — privacy-clean MSP2 toolkit",
   "permissions": [
     "storage",
