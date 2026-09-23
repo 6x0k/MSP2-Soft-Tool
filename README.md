@@ -15,8 +15,8 @@
 
 - [About](#about)
 - [What's included](#whats-included)
-- [What's New in 1.8.74](#whats-new-in-1874)
 - [What's New in 1.8.73](#whats-new-in-1873)
+   [What's New in 1.8.53](#whats-new-in-1853)
 - [What's New in 1.8.42](#whats-new-in-1842)
 - [Privacy cleanup](#privacy-cleanup)
 - [Installation](#installation)
@@ -69,39 +69,6 @@ The extension provides a large in-game tool panel with functionality around:
 
 The exact availability of individual features can depend on the current MSP2 client and its APIs.
 
----
-
-# What's New in 1.8.74
-
-Version **1.8.74** contains the clean UI integration and the selected functionality carried forward from the newer upstream 1.8.73 release.
-
-### What's new in 1.8.74
-
-| Feature | Description | Status |
-|---|---|---|
-| Integrated Performance / Analytics | Performance information is displayed directly inside the existing panel instead of opening a separate window. | Included |
-| Dress Up Bot | Adds the newer Dress Up automation workflow directly into the extension UI. | Included |
-| Dress Up Sidebar Entry | Dress Up has its own compact sidebar button and opens only its own content view. | Included |
-| Outfit Color Codes | Adds a dedicated color-code tool for inspecting outfit/avatar colors and copying the resulting codes. | Included |
-| Color Codes Sidebar Entry | Color Codes has its own compact sidebar button and opens only the color-code view. | Included |
-| Single-Panel Navigation | Dress Up, Color Codes, Analytics and the existing tools are rendered inside the same panel rather than separate tool windows. | Included |
-| Updated UI / Version Display | Updated the visible version information and integrated the new functions into the existing 6x0k Space UI. | Included |
-
-### Dress Up Bot
-
-The Dress Up feature is integrated into the existing MSP2 tool panel. Its event handling covers the Dress Up game lifecycle, including challenge/outfit, ready-for-judgment, showoff, rating, round-end and game-end states.
-
-### Outfit Color Codes
-
-The Color Codes tool provides a dedicated view for outfit/avatar color information and allows the resulting color values to be copied. The clean implementation follows the MSP2 profile/avatar data flow used by the newer feature implementation.
-
-### UI integration
-
-Selecting **Dress Up** shows only the Dress Up interface, while selecting **Color Codes** shows only the Color Codes interface. Performance / Analytics likewise stays inside the main panel.
-
-### Clean-build exclusions
-
-The 1.8.74 integration does not restore credential collection, vendor vault uploads, telemetry, device/hardware fingerprinting, heartbeat/presence reporting, remote configuration, remote kill-switches or unrelated third-party synchronization.
 
 ---
 
