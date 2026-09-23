@@ -16,7 +16,7 @@
 - [About](#about)
 - [What's included](#whats-included)
 - [What's New in 1.8.73](#whats-new-in-1873)
-   [What's New in 1.8.53](#whats-new-in-1853)
+- [What's New in 1.8.53](#whats-new-in-1853)
 - [What's New in 1.8.42](#whats-new-in-1842)
 - [Privacy cleanup](#privacy-cleanup)
 - [Installation](#installation)
