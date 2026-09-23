@@ -15,7 +15,6 @@
 
 - [About](#about)
 - [What's included](#whats-included)
-- [What's New in 1.8.73](#whats-new-in-1873)
 - [What's New in 1.8.74](#whats-new-in-1874)
 - [What's New in 1.8.73](#whats-new-in-1873)
 - [What's New in 1.8.42](#whats-new-in-1842)
