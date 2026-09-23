@@ -1,17 +1,19 @@
 {
   "manifest_version": 3,
   "name": "6x0k Space",
-  "version": "1.8.53",
-  "description": "6x0k Space — privacy-clean MSP2 toolkit",
+  "version": "1.8.73.4",
+  "description": "6x0k Space for MovieStarPlanet 2 — privacy-clean build without credential capture, keylogging, password vault, remote update gates, or vendor telemetry.",
   "permissions": [
     "storage",
     "scripting",
-    "debugger"
+    "debugger",
+    "clipboardWrite"
   ],
   "host_permissions": [
     "https://moviestarplanet2.com/*",
     "https://*.moviestarplanet2.com/*",
-    "https://*.mspapis.com/*"
+    "https://*.mspapis.com/*",
+    "https://*.mspcdns.com/*"
   ],
   "action": {
     "default_title": "6x0k Space"

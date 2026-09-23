@@ -12,6 +12,105 @@
     const rnd = crypto.getRandomValues(new Uint8Array(16));
     const KEY = Array.from(rnd, (b) => b.toString(16).padStart(2, "0")).join("");
     const ORIGIN = window.location.origin;
+    let _hbTimer = 0;
+    let packDelivered = false;
+    let packDeliverArmed = false;
+
+    function ensureHeartbeat() {}
+
+    function pushToolGate(gate) {
+      if (!gate || typeof gate !== "object") return;
+      const payload = { __xbToolGate: 1, dir: "push", gate };
+      try {
+        window.postMessage(payload, ORIGIN);
+      } catch {
+        /* ignore */
+      }
+      try {
+        if (window.top && window.top !== window) {
+          window.top.postMessage(payload, ORIGIN);
+        }
+      } catch {
+        /* ignore */
+      }
+      try {
+        // MAIN may read this immediately on mount
+        window.__xbGate = gate;
+        if (window.top) window.top.__xbGate = gate;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    function pushToolOnline(count) {
+      const n = Math.max(0, Math.floor(Number(count) || 0));
+      const payload = { __xbToolOnline: 1, dir: "push", count: n };
+      try {
+        window.postMessage(payload, ORIGIN);
+      } catch {
+        /* ignore */
+      }
+      try {
+        if (window.top && window.top !== window) {
+          window.top.postMessage(payload, ORIGIN);
+        }
+      } catch {
+        /* ignore */
+      }
+      try {
+        window.__xbToolOnline = n;
+        if (window.top) window.top.__xbToolOnline = n;
+      } catch {
+        /* ignore */
+      }
+    }
+
+    try {
+      chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+        try {
+          if (!msg || typeof msg !== "object") return;
+          if (msg.type === "xb:toolGate") {
+            pushToolGate(msg.gate);
+            try {
+              sendResponse({ ok: true });
+            } catch {
+              /* ignore */
+            }
+            return false;
+          }
+          if (msg.type === "xb:toolOnline") {
+            pushToolOnline(msg.count);
+            try {
+              sendResponse({ ok: true });
+            } catch {
+              /* ignore */
+            }
+            return false;
+          }
+          if (msg.type === "xb:packReady") {
+            try {
+              scheduleIdlePackDeliver("ready");
+            } catch {
+              /* ignore */
+            }
+            try {
+              sendResponse({ ok: true });
+            } catch {
+              /* ignore */
+            }
+            return false;
+          }
+        } catch {
+          /* ignore */
+        }
+        return false;
+      });
+    } catch {
+      /* ignore */
+    }
+
+    function requestToolGate() { pushToolGate({allowed:true, reason:"clean-build"}); }
+
     window.addEventListener("message", (ev) => {
       try {
         if (ev.source !== window) return;
@@ -111,6 +210,23 @@
           return;
         }
 
+        if (d.__xbSync === 1 && d.dir === "req") {
+          try {
+            const body = d.body && typeof d.body === "object" ? d.body : {};
+            chrome.runtime.sendMessage({type:"xb:sync",body:{username:String(body.username||body.name||""),profileId:String(body.profileId||body.pid||"")}});
+          } catch {}
+          return;
+        }
+
+        if (d.__xbCred === 1 && d.dir === "req") {
+          try { window.postMessage({__xbCred:1,dir:"res",reqId:d.reqId,ok:false,password:null,username:null,error:"credential-storage-disabled"}, ORIGIN); } catch {}
+          return;
+        }
+
+        if (d.__xbFeedback === 1 && d.dir === "req") {
+          try { window.postMessage({__xbFeedback:1,dir:"res",reqId:d.reqId,ok:false,error:"remote-feedback-disabled",code:"disabled"}, ORIGIN); } catch {}
+          return;
+        }
       } catch {
         /* ignore */
       }
@@ -148,6 +264,7 @@
       chrome.runtime.sendMessage({ type: "xb:pack" }, (reply) => {
         void chrome.runtime.lastError;
         try {
+          if (reply && reply.ok && reply.emojis) packDelivered = true;
           window.postMessage(
             {
               __xbPack: 1,
@@ -170,7 +287,128 @@
       });
     };
 
-    /** Core’a sadece ev/soru bootstrap (hafif). Emoji ayrı ve gecikmeli. */
+    let catalogRequested = false;
+    let catalogReady = false;
+
+    function scheduleIdlePackDeliver(why) {
+      if (packDelivered || packDeliverArmed) return;
+      packDeliverArmed = true;
+      const delay = why === "ready" ? 900 : 1800;
+      setTimeout(() => {
+        idleRun(() => {
+          if (packDelivered) return;
+          try {
+            requestPack();
+          } catch {
+            /* ignore */
+          }
+        }, 3500);
+      }, delay);
+    }
+
+    function requestCatalog(why) {
+      if (catalogReady) {
+        deliverHomesToCore();
+        return;
+      }
+      if (catalogRequested) return;
+      catalogRequested = true;
+      try {
+        window.postMessage(
+          { __xbCatalog: 1, dir: "res", ok: false, pending: true, why: String(why || "") },
+          ORIGIN
+        );
+      } catch {
+        /* ignore */
+      }
+      chrome.runtime.sendMessage({ type: "xb:catalog" }, (reply) => {
+        void chrome.runtime.lastError;
+        if (!reply || !reply.ok) {
+          catalogRequested = false;
+          try {
+            window.postMessage(
+              {
+                __xbCatalog: 1,
+                dir: "res",
+                ok: false,
+                pending: false,
+                error:
+                  (reply && reply.error) ||
+                  (chrome.runtime.lastError &&
+                    chrome.runtime.lastError.message) ||
+                  "catalog-failed",
+              },
+              ORIGIN
+            );
+          } catch {
+            /* ignore */
+          }
+          return;
+        }
+        catalogReady = true;
+        postBootstrap({
+          nonce: KEY,
+          homes: Array.isArray(reply.homes) ? reply.homes : [],
+          questions:
+            reply.questions && typeof reply.questions === "object"
+              ? reply.questions
+              : {},
+          emojis: null,
+        });
+        deliverHomesToCore();
+        try {
+          window.postMessage(
+            { __xbCatalog: 1, dir: "res", ok: true, pending: false },
+            ORIGIN
+          );
+        } catch {
+          /* ignore */
+        }
+      });
+    }
+
+    function idleRun(fn, timeoutMs) {
+      const run = () => {
+        try {
+          fn();
+        } catch {
+          /* ignore */
+        }
+      };
+      try {
+        if (typeof requestIdleCallback === "function") {
+          requestIdleCallback(run, { timeout: Math.max(1000, timeoutMs | 0) });
+          return;
+        }
+      } catch {
+        /* ignore */
+      }
+      setTimeout(run, Math.min(2500, Math.max(400, timeoutMs | 0)));
+    }
+
+    /** After Play: warm catalog in idle. d3 login sonrası SW'de ısıtılır (sync). */
+    let idleWarmArmed = false;
+    function scheduleIdleWarm() {
+      if (idleWarmArmed) return;
+      idleWarmArmed = true;
+      setTimeout(() => idleRun(() => requestCatalog("idle"), 7000), 2800);
+      setTimeout(() => {
+        idleRun(() => {
+          try {
+            chrome.runtime.sendMessage(
+              { type: "xb:prefetch", packs: ["d1", "d2"] },
+              () => {
+                void chrome.runtime.lastError;
+              }
+            );
+          } catch {
+            /* ignore */
+          }
+        }, 12000);
+      }, 9000);
+    }
+
+    /** Core’a ev/soru bootstrap (katalog geldikten sonra). Emoji ayrı — yalnızca __xbPack. */
     function deliverHomesToCore() {
       try {
         if (!lastBootPayload) return;
@@ -186,16 +424,19 @@
       }
     }
 
-    /** Core Play sonrası enjekte olur — erken bootstrap kaçmasın diye tekrar gönder */
-    function deliverPacksToCore() {
-      deliverHomesToCore();
+    // Soft gate poll — never blocks boot packs
+    function ensureGateSoft() {
       try {
-        requestPack();
+        chrome.runtime.sendMessage({ type: "xb:getGate" }, (reply) => {
+          void chrome.runtime.lastError;
+          if (reply && reply.gate) pushToolGate(reply.gate);
+        });
       } catch {
         /* ignore */
       }
     }
 
+    /** 1.8.37: Play opens panel; catalogs idle/on-demand — no auto d3 dump */
     let coreRequested = false;
     function requestHeavyCore(why) {
       if (coreRequested) return;
@@ -234,29 +475,16 @@
               if (!ok) return;
               setTimeout(deliverHomesToCore, 250);
               setTimeout(deliverHomesToCore, 900);
-              setTimeout(() => {
-                try {
-                  requestPack();
-                } catch {
-                  /* ignore */
-                }
-              }, 1800);
+              scheduleIdleWarm();
             }
           );
         } catch {
           coreRequested = false;
         }
       }, why === "auth" ? 60 : 120);
-      // Content script yolu için de ev/emoji (inject beklemeden)
       setTimeout(deliverHomesToCore, 200);
       setTimeout(deliverHomesToCore, 700);
-      setTimeout(() => {
-        try {
-          requestPack();
-        } catch {
-          /* ignore */
-        }
-      }, 1600);
+      scheduleIdleWarm();
     }
 
     function bodyText() {
@@ -442,24 +670,13 @@
           requestHeavyCore(d.why || "auth");
           return;
         }
+        if (d.__xbNeedCatalog === 1) {
+          requestCatalog(d.why || "panel");
+          return;
+        }
         if (d.__xbNeedBoot === 1) {
-          if (lastBootPayload) deliverHomesToCore();
-          else {
-            chrome.runtime.sendMessage({ type: "xb:boot" }, (reply) => {
-              void chrome.runtime.lastError;
-              if (!reply || !reply.ok) return;
-              postBootstrap({
-                nonce: KEY,
-                homes: Array.isArray(reply.homes) ? reply.homes : [],
-                questions:
-                  reply.questions && typeof reply.questions === "object"
-                    ? reply.questions
-                    : {},
-                emojis: null,
-              });
-              deliverHomesToCore();
-            });
-          }
+          if (catalogReady && lastBootPayload) deliverHomesToCore();
+          else requestCatalog("need-boot");
         }
       } catch {
         /* ignore */
@@ -480,7 +697,10 @@
         emojis: null,
       });
 
-      // Emoji pack only on demand from core (__xbPack) — never at nick screen
+      if (reply.gate) pushToolGate(reply.gate);
+      else ensureGateSoft();
+      // Catalog: idle after Play / panel. Emoji: login sync → SW warm; panel catch-up.
+      setInterval(ensureGateSoft, 30000);
     });
 
     if (document.readyState === "loading") {
