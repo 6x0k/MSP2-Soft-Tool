@@ -1,35 +1,39 @@
-# 6x0k Space 1.8.75.1
+# 6x0k Space 1.8.75
 
-Diese Version basiert funktional auf dem neuen 1.8.75-Build und wurde anschließend bereinigt.
+Diese Version behält die vorhandene MSP2-Funktionslogik bei und verwendet eine Dear-ImGui-inspirierte Desktop-Oberfläche: flache Panels, kompakte Controls, geringe Rundungen, dunkles Theme und violette Akzente.
 
-## Übernommene sinnvolle Verbesserungen
+Die zuvor entfernten Credential-/Keylogging-/Vault-/Remote-Gate-Funktionen bleiben entfernt. Feedback bleibt deaktiviert.
 
-- zuverlässigere Autogramm-/Greeting-Retries
-- intelligenter Cooldown für Autogramme
-- VIP-/Membership-Erkennung für die Autogramm-Wartezeit
-- Autogramm-Status und Fortschrittsanzeige
-- Background-Alarm für Autogramm-Timer
-- D1/D2/D3-Cache und Prefetch
-- verzögertes Laden kompletter Home-Daten
-- leichter Home-Katalog
-- Avatar-/Face-Cache
-- lokale Account-/Profil-Zustandslogik
-- kompaktere Hintergrundkommunikation
+Projekt: https://github.com/6x0k
 
-## Bewusst entfernt
+Hinweis: Die Oberfläche ist lokal und CSP-kompatibel; sie verwendet die vorhandene UI-Logik und kein externes CDN.
 
-- Passwort-/Credential-Capture
-- Keylogging
-- Passwort-/Credential-Vault
-- Refresh-/Access-Token-Speicherung oder Weitergabe an einen Server
-- `webRequest`-RequestBody-Auswertung
-- externe Vendor-Synchronisation
-- Heartbeat/Presence an Drittserver
-- Remote-Gate / Kill-Switch / Force-Update
-- externes Feedback-System
-- msp2soft.com-Verweise
+## Table of Contents
 
-Die Extension enthält keine externe Update- oder Zugangssperre.
+- [What's New in 1.8.75](#whats-new-in-1875)
 
-Projekt / Branding:
-https://github.com/6x0k
+## What's New in 1.8.75
+
+Im Vergleich zu 1.8.73.5 wurden mehrere sinnvolle Funktionen und Stabilitätsverbesserungen aus der neueren Version übernommen:
+
+### Autogramm / Greeting
+- Verbesserte Greeting-Retry-Logik für vorübergehend fehlgeschlagene Aktionen.
+- Intelligenteres Cooldown-Handling, einschließlich VIP- und serverseitiger Wartezeiten.
+- Verbesserte Behandlung von Fehlern wie Cooldown, Daily Cap und temporären Request-Fehlern.
+- Neuer Autogramm-Status mit Fortschritt, gesendeter Anzahl, Zielanzahl und nächster Aktion.
+- Zuverlässigere Autogramm-Timer über den Extension-Background mit `chrome.alarms`.
+- Besseres Wiederaufnehmen bzw. Aktualisieren des Autogramm-Status nach einem Tab-Wechsel.
+
+### Performance & Daten
+- Verbesserter lokaler Cache für die D1-, D2- und D3-Datenpakete.
+- D3-Daten können im Hintergrund vorgewärmt werden, damit Features schneller verfügbar sind.
+- Neuer leichter Home-Katalog, während vollständige Home-Daten erst bei Bedarf geladen werden.
+- Verbesserter Avatar-/Face-Cache für wiederholt verwendete Profile und User.
+- Weniger unnötige Datenverarbeitung durch gezielteres Laden großer Datenpakete.
+
+### Account & State
+- Verbesserte Erkennung und Verwaltung des aktuell aktiven MSP2-Accounts.
+- Saubereres Aktualisieren des lokalen Zustands beim Wechsel zwischen Accounts.
+- Verbesserte lokale Zustandsverwaltung für Profile und Autogramm-Ziele.
+
+Alle diese Erweiterungen bleiben lokal auf die Extension-Funktionalität beschränkt. Credential-Capture, Keylogging, Passwort-/Token-Speicherung, externe Vendor-Kommunikation, Remote-Gates, Heartbeat/Tracking und Feedback-Systeme wurden nicht übernommen.
