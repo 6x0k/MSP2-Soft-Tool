@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>6x0k Space</strong><br>
-  <sub>Cleaned by 6x0k · v.1.8.74</sub>
+  <sub>Cleaned by 6x0k · v.1.8.75</sub>
 </p>
 
 <p align="center">
@@ -445,7 +445,7 @@ The previous third-party telemetry/vendor domains are no longer present in the m
 
 # Changelog
 
-## v.1.8.74 — Cleaned by 6x0k
+## v.1.8.75 — Cleaned by 6x0k
 
 ### Added
 
@@ -600,5 +600,5 @@ Use browser automation and game-related functionality responsibly and at your ow
 ---
 
 <p align="center">
-  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.74</sub>
+  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.75</sub>
 </p>
