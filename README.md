@@ -1,604 +1,267 @@
+<div align="center">
+
 # 6x0k Space
 
-<p align="center">
-  <strong>6x0k Space</strong><br>
-  <sub>Cleaned by 6x0k · v.1.8.86</sub>
-</p>
+**Community tools for MovieStarPlanet 2**
 
-<p align="center">
-  A cleaned and privacy-focused Chrome extension for MovieStarPlanet 2.
-</p>
+`v1.8.86` · Manifest V3 · Chrome Extension
+
+A feature-focused extension with profile utilities, messaging helpers, room tools,
+customization options, and a **Ghost mode** for room entry.
+
+</div>
 
 ---
 
-## Table of Contents
+## Contents
 
-- [About](#about)
-- [What's included](#whats-included)
-- [What's New in 1.8.86](#whats-new-in-1875)
-- [What's New in 1.8.73](#whats-new-in-1873)
-- [What's New in 1.8.53](#whats-new-in-1853)
-- [What's New in 1.8.42](#whats-new-in-1842)
-- [Privacy cleanup](#privacy-cleanup)
+- [Overview](#overview)
+- [Features](#features)
+- [What's New in 1.8.86](#whats-new-in-1886)
+- [Ghost Mode](#ghost-mode)
+- [Feature History](#feature-history)
+- [Privacy and Security Notes](#privacy-and-security-notes)
 - [Installation](#installation)
-- [Repository structure](#repository-structure)
-- [File responsibilities](#file-responsibilities)
+- [Project Structure](#project-structure)
 - [Permissions](#permissions)
-- [Changelog](#changelog)
-- [Security & transparency](#security--transparency)
 - [Development](#development)
 - [Disclaimer](#disclaimer)
 
-## About
-
-**6x0k Space** is a browser extension that adds a collection of tools and automation features to the MovieStarPlanet 2 web client.
-
-This repository contains a cleaned version of the extension. The goal of this build is to remove the parts that were unrelated to the normal tool functionality — especially credential collection, telemetry, hardware fingerprinting, external synchronization and remote control mechanisms.
-
-The extension still communicates with the official MSP2 game/API infrastructure where required for its actual features.
-
-> **Important:** 6x0k Space is an independent community project and is not affiliated with, endorsed by, or sponsored by MovieStarPlanet or its owners.
-
 ---
 
-## What's included
+## Overview
 
-The extension provides a large in-game tool panel with functionality around:
+**6x0k Space** is a community-made browser extension that adds a collection of
+tools and interface enhancements to the MovieStarPlanet 2 web client.
 
-- Profile information and profile interactions
-- Friends management
-- Friend request actions
-- Auto-Liker functionality
-- Chat and messaging tools
-- DM automation
-- DM spam controls and configurable limits
-- Automatic friend handling
-- Friend cleanup tools
-- VIP friend filtering
-- Mood management
-- Status/profile utilities
-- Emoji tools and emoji favorites
-- Home/room utilities
-- Outfit and profile-related tools
-- Autograph-related functionality
-- Player interaction utilities
-- Game/event-related helpers
-- UI customization and preferences
+This repository is a modified build based on selected upstream functionality.
+Features depend on the current MSP2 website, its APIs, and the extension's
+permissions; individual functions may stop working when the game changes.
+
+> [!NOTE]
+> 6x0k Space is an independent community project. It is not affiliated with,
+> endorsed by, or sponsored by MovieStarPlanet or its owners.
+
+## Features
+
+### Profiles and players
+- Profile information and player interaction utilities
+- Outfit and avatar-related tools
+- Autograph / greeting tools
+- VIP and profile-state helpers
+- Friend management and friend-request actions
+- Friend cleanup and VIP friend filtering
+
+### Chat and messaging
+- Chat and direct-message utilities
+- DM automation with configurable limits
+- Incoming-message helpers
+- Emoji tools and favorites
+- Mood and status utilities
+
+### Rooms and game helpers
+- **Ghost Mode** for joining rooms invisibly, where supported by the game
+- Home and room utilities
+- Room animation tools and animation previews
+- Emote browsing and category helpers
+- Game and event-related helpers, including Dress Up workflow support
+
+### Interface and personalization
+- Custom panel backgrounds
+- Image upload, resizing, and compression for supported backgrounds
 - Theme and panel customization
-- Local settings persistence
-- Changelog / privacy information
+- Local preferences and settings persistence
+- Local data-pack caching and background prefetching
 
-The exact availability of individual features can depend on the current MSP2 client and its APIs.
-
----
+> Feature availability can vary with the current MSP2 client and server behavior.
 
 ## What's New in 1.8.86
 
+### Ghost and Halloween-related functionality
+- The build includes a **Ghost Mode** toggle for invisible room entry.
+- The Ghost toggle's state is saved locally in the extension's settings.
+- Halloween quest detection was expanded to recognize additional identifiers
+  containing `coffin`, `spirit`, `skull`, `spook`, and `pumpkin`.
+- Ghost collection handling was updated to process reward quantities and account
+  for the daily target of 35 where the relevant collection workflow is available.
 
-### Autogramm / Greeting
-- More reliable Autogramm/Greeting retry handling for temporary request failures.
-- Smarter Autogramm cooldown handling instead of relying only on fixed delays.
-- VIP/Membership detection for determining appropriate Autogramm wait times.
-- Improved handling of cooldowns, daily limits, invalid greeting definitions, and temporary request errors.
-- New Autogramm status and progress information, including sent count, target count, current state, and the next action.
-- Background alarms for Autogramm timers, making scheduled actions more reliable when the browser suspends normal JavaScript timers.
-- Improved state recovery and status updates when switching away from and back to the MSP2 tab.
+### Autograph / Greeting
+- Improved retry handling for temporary request failures.
+- More adaptive cooldown handling rather than relying only on fixed delays.
+- VIP-aware wait-time handling.
+- Improved handling of daily limits, invalid greeting definitions, and temporary errors.
+- More detailed progress and status information.
+- Background alarms help scheduled actions continue more reliably when browser
+  timers are suspended.
+- Improved state recovery when switching between MSP2 tabs.
 
-### Performance & Data Loading
-- Improved local caching for the D1, D2, and D3 data packs.
-- Background D3 prefetch/warming so relevant data can be prepared before a feature is opened.
-- A lightweight Home catalog to avoid loading full Home data unnecessarily.
-- Full Home data is loaded on demand when a specific Home is actually needed.
-- Improved Avatar/Face caching for profiles and users that are accessed repeatedly.
-- More compact background data handling to reduce unnecessary processing.
+### Performance and data loading
+- Improved local caching for D1, D2, and D3 data packs.
+- Background D3 prefetching to prepare data before a feature is opened.
+- A lightweight Home catalog to avoid loading all Home data unnecessarily.
+- Full Home data is loaded on demand.
+- Improved Avatar/Face caching for repeatedly accessed profiles.
+- More compact background data handling.
 
-### Account & Profile State
-- Improved local account/profile state handling.
+### Account and profile state
+- Improved local profile-state handling.
 - Cleaner state management when switching between MSP2 accounts.
-- Better local state handling for profiles and Autogramm targets.
+- Better local state handling for profiles and Autograph targets.
+
+## Ghost Mode
+
+Ghost Mode is an in-panel toggle intended to let the user enter a room without
+being shown to other players, while still allowing supported room interactions.
+
+**How to use it**
+1. Open MovieStarPlanet 2 and open the 6x0k Space panel.
+2. Find the **Ghost** control in the relevant tools section.
+3. Enable it before entering a room, or use the toggle as instructed by the UI.
+4. Turn it off when you no longer need it.
+
+The exact behavior depends on MSP2's current room/session implementation. The
+toggle does not guarantee invisibility in every game version or every situation.
+
+### Ghost collection / daily target
+
+The updated collection logic handles reward quantities and checks progress toward
+the daily target of **35 ghosts**. The related quest matcher also recognizes more
+Halloween-themed identifiers. This describes the code's intended behavior; the
+result should be verified in-game because event APIs and quest data can change.
+
+## Feature History
+
+### 1.8.73 — Selected upstream additions
+- **Auto Dress Up:** assists with the Dress Up workflow and relevant round states.
+- **Dress Up event handling:** handles challenge/outfit, ready-for-judgment,
+  showoff, rating, round-end, and game-end states.
+- **Outfit / Avatar color codes:** retrieves inventory-related data and exposes
+  associated color values for inspection and copying.
+- **Integrated feature UI:** adds access to the selected tools in the panel.
+
+### 1.8.53 — Selected tools and interface additions
+- Autograph auto-repeat with cooldown handling, counters, and limits
+- VIP detection through MSP2 membership information
+- Shop emote loading and categorization
+- Room animation playback and animation previews
+- Radar interface and supporting helpers
+- Custom panel backgrounds, image resizing, and local persistence
+
+The upstream **Feedback / Idea** tab is intentionally omitted from this build.
+
+### 1.8.42 — Local caching and performance
+- Persistent local D3 cache
+- Pack-ready notification for active MSP2 tabs
+- Improved background D3 warm-up
+- Local-first data-pack loading and prefetch support
 
 ---
 
-# What's New in 1.8.73
+## Privacy and Security Notes
 
-Version **1.8.73** is the upstream feature release from which the selected new functionality was taken for the clean 6x0k Space build.
+This project has been modified to remove selected upstream components that were
+not required for the documented tool features. However, a README description is
+not a substitute for a complete security audit.
 
-### New functionality from 1.8.73
+Before using this extension with a real account, inspect the source code and
+review its network requests, token/session handling, permissions, and any code
+that runs in the page context. Only install builds you have independently
+reviewed or trust.
 
-| Feature | Description | Included in clean build |
-|---|---|---|
-| Auto Dress Up | Automates the Dress Up game workflow and progresses through the relevant round flow. | Yes |
-| Dress Up Event Handling | Handles Dress Up lifecycle events such as challenge/outfit, ready-for-judgment, showoff, rating, round-end and game-end states. | Yes |
-| Outfit / Avatar Color Codes | Retrieves avatar/outfit inventory information and exposes associated color values for inspection and copying. | Yes |
-| Integrated Feature UI | Provides dedicated UI access for the new functions. | Yes |
-| Updated Tool Integration | Connects the new functionality with the existing MSP2 session and tool panel. | Yes |
+The extension necessarily communicates with MSP2's own website/API endpoints
+for features that interact with the game. Browser permissions and behavior may
+change as the code evolves.
 
-### Excluded upstream infrastructure
+### Review checklist
+- Confirm every requested permission is necessary.
+- Review page-injected scripts and authentication/session handling.
+- Inspect external network destinations and data sent to them.
+- Re-test the extension after merging upstream changes.
+- Do not treat “clean” in a filename or description as proof of safety.
 
-The clean build deliberately excludes unrelated privacy-sensitive infrastructure from the upstream version, including credential collection, vendor vault communication, telemetry, device/hardware fingerprinting, heartbeat/presence reporting, remote configuration, remote control/kill-switch mechanisms and third-party synchronization.
+## Installation
 
----
+This project is distributed as an unpacked Chrome extension.
 
-# What's New in 1.8.53
-
-Version **1.8.53** brings the selected feature and UI additions from the upstream 1.8.53 release into the clean 6x0k Space build. The feature layer was merged without restoring the upstream vendor telemetry, credential-vault, remote-control or `webRequest` systems.
-
-### What's new
-
-| Feature | Description | Status |
-|---|---|---|
-| Autographer Auto-Repeat | Repeats greeting/autograph actions with cooldown handling, counters and configurable limits. | Included |
-| VIP Detection | Checks the MSP2 membership summary to determine current VIP status. | Included |
-| Shop Emotes | Loads and parses MSP2 shop emote listings and merges refreshed data with existing local properties. | Included |
-| Emote Categories | Organizes emotes into sitting, dances, posing and basic categories. | Included |
-| Room Animations | Plays room animations using the current room/session information. | Included |
-| Animation Preview | Adds animation-sheet/grid rendering and preview playback. | Included |
-| Radar | Adds the 1.8.53 radar functionality and related UI. | Included |
-| Custom Panel Backgrounds | Allows a custom panel background using a local image or supported URL. | Included |
-| Image Upload & Compression | Reads local images and compresses/resizes large images before storing them. | Included |
-| Persistent Background Storage | Persists panel backgrounds locally with IndexedDB/local storage. | Included |
-| Background UI Sync | Synchronizes background state with the panel UI. | Included |
-
-### Autographer Auto-Repeat
-
-The autographer can repeat greeting actions while respecting cooldowns and tracking the number of sends. A configurable maximum can limit repetitions; a maximum of `0` is treated as unlimited by the upstream feature logic.
-
-### VIP Detection
-
-The new VIP helper uses the MSP2 membership-summary API to inspect membership information such as the current tier and expiry. This is a direct MSP2 API feature and does not require the removed vendor infrastructure.
-
-### Shop Emotes
-
-1.8.53 adds a shop-inventory loader that can process multiple pages of MSP2 emote listings. The parser categorizes emotes and preserves compatible properties already stored locally.
-
-### Room Animations & Animation Preview
-
-New helpers resolve the current session, play room animations and provide an animation-sheet/grid preview for the available animation data.
-
-### Custom Panel Backgrounds
-
-Panel backgrounds can be supplied as local images or supported image URLs. Large images are resized and compressed before being persisted. The clean build keeps this background data locally instead of uploading it to a vendor service.
-
-### Radar
-
-The 1.8.53 radar UI and supporting helpers are included in the clean build.
-
-### Removed from the clean UI
-
-The upstream **Feedback / Idea** tab is intentionally not included in 6x0k Space. The rest of the selected 1.8.53 feature additions remain available.
-
-### Privacy boundary
-
-The 1.8.53 feature merge does **not** restore the upstream privacy-sensitive background systems. The clean build continues to exclude credential/password interception, vendor vault uploads, third-party account synchronization, hardware/device fingerprinting, heartbeat/presence reporting, external IP telemetry, remote configuration, remote kill-switches, forced remote version checks, vendor feedback uploads and `webRequest`.
-
----
-
-# What's New in 1.8.42
-
-Version **1.8.42** adds selected local performance and data-loading improvements while keeping the privacy-clean architecture unchanged.
-
-### Durable D3 Cache
-
-D3 data can now be kept in a persistent local browser cache using the extension's local `CacheStorage`.
-
-This adds:
-
-- `_readDurableD3Text()`
-- `_writeDurableD3Text()`
-
-The cache is used as a local-first source for D3 data and can survive service-worker restarts. If the cache is unavailable or invalid, the extension falls back to its bundled local D3 data.
-
-### Pack Ready Notification
-
-A new `_notifyPackReady()` helper can notify active MSP2 tabs when the local data pack has finished loading.
-
-The notification uses:
-
-```text
-xb:packReady
-```
-
-This allows the UI to react to locally prepared data without unnecessary repeated loading.
-
-### Improved D3 Warm-Up
-
-The existing background warm-up has been extended to make use of the durable local cache.
-
-The extension can prepare D3 data in the background before a feature needs it, reducing loading delays while keeping the operation local.
-
-### Local-First Pack Loading
-
-The pack-loading path now follows a local-first strategy:
-
-```text
-Persistent D3 cache
-        ↓
-In-memory cache
-        ↓
-Bundled d3.json
-```
-
-No third-party vendor service is required for these improvements.
-
-### `xb:prefetch`
-
-The existing `xb:prefetch` path remains available for preparing local data ahead of time. This works together with the D3 cache and background warm-up improvements.
-
-### Privacy
-
-Only the useful 1.8.42 local caching and performance changes were added.
-
-The following upstream functionality remains excluded:
-
-- Credential/password interception
-- Credential queues
-- Vendor vault uploads
-- Account/token synchronization to third-party servers
-- Hardware/device fingerprinting
-- Heartbeat/presence reporting
-- IP collection for vendor telemetry
-- Remote configuration
-- Remote kill-switches
-- Forced remote version checks
-- Vendor feedback uploads
-- Vendor telemetry
-- Third-party vendor host permissions
-- `webRequest`
-
-The build therefore remains **privacy-clean** while gaining the selected 1.8.42 improvements.
-
----
-
-# Privacy cleanup
-
-The main purpose of this release is the removal of functionality that could collect or transmit information unrelated to the extension's normal operation.
-
-### Removed
-
-| Component | Status |
-|---|---|
-| Password interception | Removed |
-| Password storage/queuing | Removed |
-| External credential vault upload | Removed |
-| Account/token synchronization to third-party servers | Removed |
-| Hardware fingerprinting | Removed |
-| PC identification collection | Removed |
-| CPU/RAM/GPU collection | Removed |
-| Screen-resolution collection | Removed |
-| Browser/system metadata collection | Removed |
-| Heartbeat / presence reporting | Removed |
-| External IP lookup | Removed |
-| Remote feedback upload | Removed |
-| Remote configuration fetching | Removed |
-| Remote kill-switch | Removed |
-| Forced remote version checks | Removed |
-| Third-party host permissions | Removed |
-| `webRequest` permission | Removed |
-| Vendor telemetry | Removed |
-
-### What remains
-
-The extension still needs access to MSP2's own web/API infrastructure for features that actually interact with the game.
-
-The extension also handles the current MSP2 authentication token **locally in the browser**, because the tool needs the active game session to perform authenticated functionality. The cleaned build does not intentionally send that token to the removed third-party vault/telemetry infrastructure.
-
-The `debugger` permission is still present because parts of the tool use Chrome DevTools Protocol functionality for browser/game interaction.
-
----
-
-# Installation
-
-6x0k Space is currently distributed as an unpacked Chrome extension.
-
-### 1. Download the repository
-
-Clone the repository:
-
-```bash
-git clone https://github.com/6x0k/MSP2-Soft-Tool.git
-```
-
-Or download the repository as a ZIP from GitHub and extract it.
+### 1. Download and extract
+Download the ZIP archive and extract it to a folder on your computer.
 
 ### 2. Open Chrome Extensions
-
-Open:
+Navigate to:
 
 ```text
 chrome://extensions/
 ```
 
-### 3. Enable Developer Mode
-
-Turn on **Developer mode** in the top-right corner.
+### 3. Enable Developer mode
+Turn on **Developer mode**.
 
 ### 4. Load the extension
+Click **Load unpacked** and select the extracted project folder containing
+`manifest.json`.
 
-Click:
+Do not select the ZIP file itself.
 
-**Load unpacked**
+### 5. Open MSP2
+Open MovieStarPlanet 2 and reload the page if it was already open. The panel
+should appear after the game client has loaded, assuming the current client is
+compatible.
 
-Select the folder containing:
-
-```text
-manifest.json
-app.js
-bg.js
-boot.js
-stub.js
-d1.json
-d2.json
-d3.json
-```
-
-Do **not** select the ZIP file itself. Select the extracted project folder.
-
-### 5. Open MovieStarPlanet 2
-
-Open the MSP2 website and reload the page if it was already open.
-
-The 6x0k Space panel should become available once the game has loaded.
-
----
-
-# Repository structure
+## Project Structure
 
 ```text
 6x0k Space/
-├── app.js          # Main UI and tool functionality
-├── bg.js           # Manifest V3 background service worker
-├── boot.js         # Page ↔ extension bridge / initialization
-├── stub.js         # Local authentication-token bridge
-├── d1.json         # Extension data
-├── d2.json         # Extension data
-├── d3.json         # Extension data
-├── manifest.json   # Chrome extension manifest and permissions
-├── README.md       # Project documentation
-└── .gitignore      # Git ignore rules
+├── app.js        # Main UI and feature logic
+├── bg.js         # Manifest V3 background service worker
+├── boot.js       # Initialization and page/extension bridge
+├── stub.js       # Page-side session/authentication bridge; review carefully
+├── d1.json       # Local extension data
+├── d2.json       # Local extension data
+├── d3.json       # Local extension data
+├── manifest.json # Extension configuration and permissions
+├── README.md     # Project documentation
+└── .gitignore    # Git ignore rules
 ```
 
-## File responsibilities
+## Permissions
 
-### `manifest.json`
+The manifest currently requests the following permissions:
 
-Defines the Chrome extension configuration, including:
+| Permission | General purpose |
+|---|---|
+| `storage` | Save extension settings and local state |
+| `scripting` | Register or inject scripts where permitted |
+| `debugger` | Support browser/game interaction features using DevTools Protocol |
+| `clipboardWrite` | Allow supported copy-to-clipboard features |
+| `alarms` | Schedule background tasks such as timers |
 
-- Extension name and version
-- Manifest V3 configuration
-- Background service worker
-- Required Chrome permissions
-- MSP2 host permissions
+Host permissions cover MSP2-related domains used by the extension. Always check
+`manifest.json` before installing and verify that the current permission list
+matches the features you intend to use.
 
-The cleaned build uses only the permissions needed by the remaining extension architecture:
+## Development
 
-```text
-storage
-scripting
-debugger
-```
+The extension uses **Manifest V3** and primarily plain JavaScript.
 
-### `bg.js`
+Suggested review steps before publishing a build:
 
-The background service worker handles extension-side functionality such as:
+1. Compare the source against the intended upstream version.
+2. Review changed JavaScript and manifest permissions.
+3. Check for unexpected external URLs, token handling, or data collection.
+4. Test core features in a non-sensitive test environment.
+5. Update this README and the changelog whenever behavior changes.
 
-- Chrome runtime messaging
-- Script registration/injection
-- MSP2 page interaction
-- Chrome DevTools Protocol / debugger functionality
-- Local extension state
+## Disclaimer
 
-The previous external vault, heartbeat, telemetry, remote configuration and credential handlers have been removed.
-
-### `boot.js`
-
-Responsible for initializing the page-side bridge and communicating between the MSP2 page and the extension.
-
-The previous hardware collection and heartbeat logic has been removed.
-
-### `stub.js`
-
-A lightweight page-side authentication bridge.
-
-It exposes the active MSP2 session token locally so the extension can perform authenticated game functionality.
-
-It does **not** contain the previous password-capture, IP-lookup, telemetry or third-party upload functionality.
-
-### `app.js`
-
-The main extension code.
-
-This contains the UI, settings, MSP2 API interaction and the majority of the actual tool functionality.
+This project is provided for educational and personal-use purposes. Use it at
+your own discretion and follow the game's terms and applicable rules. The
+authors make no guarantee that every feature will remain compatible with future
+MSP2 updates.
 
 ---
 
-# Permissions
+<div align="center">
 
-The current manifest requests:
+**6x0k Space** · Community project
 
-### `storage`
-
-Used for local extension settings and state.
-
-### `scripting`
-
-Used to register/inject the extension's scripts into the MSP2 pages.
-
-### `debugger`
-
-Used by parts of the tool that interact with the MSP2 page through Chrome's DevTools Protocol.
-
-This is a powerful browser permission, so users should only install the extension from a source they trust.
-
-### Host permissions
-
-The extension is restricted to MSP2-related domains required by its functionality, including:
-
-```text
-moviestarplanet2.com
-*.moviestarplanet2.com
-*.mspapis.com
-```
-
-The previous third-party telemetry/vendor domains are no longer present in the manifest.
-
----
-
-# Changelog
-
-## v.1.8.86 — Cleaned by 6x0k
-
-### Added
-
-- Autographer Auto-Repeat with cooldown handling, counters and configurable limits.
-- VIP detection using the MSP2 membership-summary API.
-- MSP2 shop emote loading and parsing.
-- Emote categorization for sitting, dances, posing and basic groups.
-- Room animation playback helpers.
-- Animation-sheet/grid preview and playback.
-- Radar functionality and UI.
-- Custom panel backgrounds.
-- Local image and supported URL background input.
-- Image resizing/compression for large panel backgrounds.
-- Local persistent background storage using IndexedDB/local storage.
-- Background UI synchronization.
-
-### Removed from the clean UI
-
-- Feedback / Idea tab.
-
-### Privacy
-
-The new 1.8.53 feature layer was merged without restoring the upstream vendor credential, telemetry, heartbeat, device-fingerprint, remote-gate or `webRequest` systems.
-
-
-This release is based on the original extension and removes the following functionality:
-
-### Credential handling
-
-- Removed password interception from login requests.
-- Removed password extraction from request bodies.
-- Removed password queues.
-- Removed password persistence used by the previous credential system.
-- Removed external credential-vault uploads.
-
-### Account and token data
-
-- Removed third-party account synchronization.
-- Removed external transmission of account/session information.
-- Removed the previous sensitive `__xbSync` flow.
-- Kept only the local authentication-token bridge required for normal MSP2 functionality.
-
-### Hardware and device tracking
-
-Removed collection of:
-
-- PC identifiers
-- CPU information
-- RAM information
-- GPU information
-- Screen resolution
-- Browser metadata
-- Operating-system metadata
-- Timezone/system metadata
-- User-agent based hardware/profile information
-
-### Heartbeat and presence
-
-- Removed background heartbeat requests.
-- Removed remote presence reporting.
-- Removed periodic third-party status updates.
-
-### IP collection
-
-- Removed the external IP lookup.
-- Removed the previous IP address from synchronization payloads.
-
-### Remote control
-
-- Removed remote configuration polling.
-- Removed remote enable/disable configuration.
-- Removed the remote kill-switch.
-- Removed forced remote version/update checks.
-
-### Feedback and telemetry
-
-- Removed remote feedback uploads.
-- Removed vendor telemetry endpoints.
-- Removed the previous third-party feedback/synchronization paths.
-
-### Browser permissions
-
-- Removed the `webRequest` permission that was previously used for request inspection.
-- Removed unnecessary third-party host permissions.
-
----
-
-# Security & transparency
-
-This project is intended to make the extension easier to inspect and safer to use than the original build.
-
-If you are auditing the source, useful places to start are:
-
-```text
-manifest.json
-bg.js
-boot.js
-stub.js
-app.js
-```
-
-In particular, `manifest.json` shows the permissions and network scope, while `bg.js`, `boot.js` and `stub.js` contain the extension/background/page communication architecture.
-
-For a deeper audit, search the source for:
-
-```text
-chrome.storage
-chrome.scripting
-chrome.debugger
-fetch(
-XMLHttpRequest
-Authorization
-Bearer
-accessToken
-refreshToken
-```
-
-The cleaned build intentionally still contains MSP2 API communication because removing all network communication would also remove many of the actual tool's features.
-
----
-
-# Development
-
-There is no Node.js build step required for the current unpacked extension.
-
-After changing source files:
-
-1. Open `chrome://extensions/`
-2. Find **6x0k Space**
-3. Click **Reload**
-4. Refresh the MSP2 page
-
-For JavaScript syntax checks:
-
-```bash
-node --check app.js
-node --check bg.js
-node --check boot.js
-node --check stub.js
-```
-
----
-
-# Disclaimer
-
-This project is provided for educational and personal use.
-
-MovieStarPlanet, MSP2 and related trademarks belong to their respective owners. This project is not affiliated with or endorsed by them.
-
-Use browser automation and game-related functionality responsibly and at your own risk. Game rules, APIs and client behavior may change without notice.
-
----
-
-<p align="center">
-  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.86</sub>
-</p>
+</div>
