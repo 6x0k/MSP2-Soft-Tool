@@ -2,7 +2,7 @@
 
 <p align="center">
   <strong>6x0k Space</strong><br>
-  <sub>Cleaned by 6x0k · v.1.8.75</sub>
+  <sub>Cleaned by 6x0k · v.1.8.86</sub>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@
 
 - [About](#about)
 - [What's included](#whats-included)
-- [What's New in 1.8.75](#whats-new-in-1875)
+- [What's New in 1.8.86](#whats-new-in-1875)
 - [What's New in 1.8.73](#whats-new-in-1873)
 - [What's New in 1.8.53](#whats-new-in-1853)
 - [What's New in 1.8.42](#whats-new-in-1842)
@@ -72,7 +72,7 @@ The exact availability of individual features can depend on the current MSP2 cli
 
 ---
 
-## What's New in 1.8.75
+## What's New in 1.8.86
 
 
 ### Autogramm / Greeting
@@ -445,7 +445,7 @@ The previous third-party telemetry/vendor domains are no longer present in the m
 
 # Changelog
 
-## v.1.8.75 — Cleaned by 6x0k
+## v.1.8.86 — Cleaned by 6x0k
 
 ### Added
 
@@ -600,5 +600,5 @@ Use browser automation and game-related functionality responsibly and at your ow
 ---
 
 <p align="center">
-  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.75</sub>
+  <sub>6x0k Space · Cleaned by 6x0k · v.1.8.86</sub>
 </p>

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "6x0k Space",
-  "version": "1.8.75.1",
+  "version": "1.8.86",
   "description": "6x0k Space für MovieStarPlanet 2 – saubere Version mit den neuen lokalen Autogramm-, Cache-, Prefetch- und Profilfunktionen ohne Credential-Capture, Keylogging, Passwort-Vault, Remote-Gate oder Vendor-Telemetrie.",
   "permissions": [
     "storage",
