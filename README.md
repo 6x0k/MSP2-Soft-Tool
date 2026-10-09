@@ -24,7 +24,6 @@ customization options, and a **Ghost mode** for room entry.
 - [Installation](#installation)
 - [Project Structure](#project-structure)
 - [Permissions](#permissions)
-- [Development](#development)
 - [Disclaimer](#disclaimer)
 
 ---
@@ -239,17 +238,6 @@ Host permissions cover MSP2-related domains used by the extension. Always check
 `manifest.json` before installing and verify that the current permission list
 matches the features you intend to use.
 
-## Development
-
-The extension uses **Manifest V3** and primarily plain JavaScript.
-
-Suggested review steps before publishing a build:
-
-1. Compare the source against the intended upstream version.
-2. Review changed JavaScript and manifest permissions.
-3. Check for unexpected external URLs, token handling, or data collection.
-4. Test core features in a non-sensitive test environment.
-5. Update this README and the changelog whenever behavior changes.
 
 ## Disclaimer
 
